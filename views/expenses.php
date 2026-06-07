@@ -8,10 +8,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="icon"type="image/jpeg" href="{{ url_for('static', filename='images/logo.jpg') }}">
-    <link rel="apple-touch-icon" href="{{ url_for('static', filename='images/logo.jpg') }}">
-    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="icon"type="image/jpeg" href="/static/images/logo.jpg">
+    <link rel="apple-touch-icon" href="/static/images/logo.jpg">
+    <link rel="manifest" href="/static/manifest.json">
 </head>
 
 <body class="app-body expense-app">
@@ -25,7 +25,7 @@
             </div>
             <div class="hero-chip">
                 <i data-lucide="wallet-cards"></i>
-                <span>{{ "{:,.0f}".format(total) }}đ</span>
+                <span><?= number_format($total, 0, ",", ".") ?>đ</span>
             </div>
         </header>
         <section class="component-card collection-card">
@@ -48,7 +48,7 @@
             </div>
 
             <div class="collection-total">
-                {{ "{:,.0f}".format(total_collected) }} VNĐ
+                <?= number_format($total_collected, 0, ",", ".") ?> VNĐ
             </div>
 
         </section>
@@ -64,18 +64,18 @@
 
             <div class="collection-list">
 
-                {% for item in collections %}
+                <?php foreach ($collections as $item): ?>
 
                 <div class="collection-row">
 
                     <div>
 
                         <strong>
-                            {{ item.member_name }}
+                            <?= e($item["member_name"]) ?>
                         </strong>
 
                         <p>
-                            {{ item.collected_at }}
+                            <?= e($item["collected_at"]) ?>
                         </p>
 
                     </div>
@@ -83,12 +83,12 @@
                     <div class="collection-actions">
 
                         <span>
-                            {{ "{:,.0f}".format(item.amount) }} VNĐ
+                            <?= number_format($item["amount"], 0, ",", ".") ?> VNĐ
                         </span>
 
                         <button
                             class="delete-collection-btn"
-                            onclick="deleteCollection({{ item.id }})"
+                            onclick="deleteCollection(<?= (int) $item["id"] ?>)"
                         >
                             <i data-lucide="trash-2"></i>
                         </button>
@@ -97,7 +97,7 @@
 
                 </div>
 
-                {% endfor %}
+                <?php endforeach; ?>
 
             </div>
 
@@ -170,11 +170,11 @@
 
                 <select id="collection-member">
 
-                    {% for member in members %}
-                    <option value="{{ member.id }}">
-                        {{ member.name }}
+                    <?php foreach ($members as $member): ?>
+                    <option value="<?= (int) $member["id"] ?>">
+                        <?= e($member["name"]) ?>
                     </option>
-                    {% endfor %}
+                    <?php endforeach; ?>
 
                 </select>
 
@@ -218,23 +218,11 @@
     </nav>
 
     <script>
-        window.TRIP_MEMBERS = {{ members|tojson }};
-        window.EXPENSE_DATA = [
-            {% for expense in expenses %}
-            {
-                id: {{ expense.id }},
-                title: {{ expense.title|default('', true)|tojson }},
-                payer: {{ expense.payer_name|default('', true)|tojson }},
-                amount: {{ expense.amount or 0 }},
-                category: {{ expense.category|default('', true)|tojson }},
-                note: {{ expense.note|default('', true)|tojson }}
-            }{% if not loop.last %},{% endif %}
-            {% endfor %}
-        ];
+        window.TRIP_MEMBERS = <?= json_encode($members, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
+        window.EXPENSE_DATA = <?= json_encode(array_map(fn($expense) => ["id" => $expense["id"], "title" => $expense["title"] ?? "", "payer" => $expense["payer_name"] ?? "", "amount" => $expense["amount"] ?? 0, "category" => $expense["category"] ?? "", "note" => $expense["note"] ?? ""], $expenses), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
     </script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
-    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" onload="window.initExpenseSocket && window.initExpenseSocket()" async></script>
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="/static/script.js"></script>
 </body>
 
 </html>

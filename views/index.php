@@ -8,14 +8,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="icon"type="image/jpeg" href="{{ url_for('static', filename='images/logo.jpg') }}">
-    <link rel="apple-touch-icon" href="{{ url_for('static', filename='images/logo.jpg') }}">
-    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+    <link rel="stylesheet" href="<?= static_url('style.css') ?>">
+    <link rel="icon"type="image/jpeg" href="<?= static_url('images/logo.jpg') ?>">
+    <link rel="apple-touch-icon" href="<?= static_url('images/logo.jpg') ?>">
+    <link rel="manifest" href="<?= static_url('manifest.json') ?>">
 </head>
 
-{% set weather_main = current.get('weather', [{}])[0].get('main', 'Clear') %}
-{% set weather_desc = current.get('weather', [{}])[0].get('description', 'Trời đẹp') %}
 
 <body class="app-body home-app">
 
@@ -50,14 +48,14 @@
             <article class="stat-card">
                 <div class="stat-icon"><i data-lucide="users-round"></i></div>
                 <span>Thành viên</span>
-                <strong>{{ members|length }}</strong>
+                <strong><?= count($members) ?></strong>
             </article>
             <article class="stat-card">
                 <div class="stat-icon">
                     <i data-lucide="camera"></i>
                 </div>
                 <span>Kỷ niệm</span>
-                <strong>{{ gallery_count }}</strong>
+                <strong><?= (int) $gallery_count ?></strong>
             </article>
         </section>
 
@@ -70,19 +68,19 @@
             </div>
             <div class="member-preview-list">
 
-                {% for member in members %}
+                <?php foreach ($members as $member): ?>
                 <div class="member-card">
 
                     <img
-                        src="{{ member.avatar }}"
-                        alt="{{ member.name }}"
+                        src="<?= e($member["avatar"]) ?>"
+                        alt="<?= e($member["name"]) ?>"
                         class="member-avatar"
                     >
 
-                    <span>{{ member.name }}</span>
+                    <span><?= e($member["name"]) ?></span>
 
                 </div>
-                {% endfor %}
+                <?php endforeach; ?>
 
             </div>
         </section>
@@ -103,82 +101,62 @@
                     <p class="eyebrow">Sắp tới</p>
                     <h2>Lịch trình gần nhất</h2>
                 </div>
-                <a class="text-link" href="/map">Mở</a>
+                <a class="text-link" href="<?= app_url('/map') ?>">Mở</a>
             </div>
-            {% set icon_map = {
-            'Di chuyển':'bus-front',
-            'Khách sạn':'hotel',
-            'Ăn uống':'utensils-crossed',
-            'Chụp ảnh':'camera',
-            'Vui chơi':'party-popper',
-            'Nghỉ ngơi':'bed'
-        } %}
+            <?php
+            $icon_map = ["Di chuyển"=>"bus-front", "Khách sạn"=>"hotel", "Ăn uống"=>"utensils-crossed", "Chụp ảnh"=>"camera", "Vui chơi"=>"party-popper", "Nghỉ ngơi"=>"bed"];
+            $color_map = ["Di chuyển"=>"#2563eb", "Khách sạn"=>"#8b5cf6", "Ăn uống"=>"#f97316", "Chụp ảnh"=>"#ec4899", "Vui chơi"=>"#10b981", "Nghỉ ngơi"=>"#64748b"];
+            ?>
 
-        {% set color_map = {
-            'Di chuyển':'#2563eb',
-            'Khách sạn':'#8b5cf6',
-            'Ăn uống':'#f97316',
-            'Chụp ảnh':'#ec4899',
-            'Vui chơi':'#10b981',
-            'Nghỉ ngơi':'#64748b'
-        } %}
-
-        {% for item in upcoming_itineraries %}
+        <?php foreach ($upcoming_itineraries as $item): ?>
         <div class="upcoming-item">
 
             <div
                 class="timeline-icon"
-                style="background:{{ color_map.get(item.activity_type,'#2563eb') }}"
+                style="background:<?= e($color_map[$item["activity_type"]] ?? "#2563eb") ?>"
             >
-                <i data-lucide="{{ icon_map.get(item.activity_type,'calendar') }}"></i>
+                <i data-lucide="<?= e($icon_map[$item["activity_type"]] ?? "calendar") ?>"></i>
             </div>
 
             <div>
                 <strong>
-                    {{ item.trip_time }} · {{ item.title }}
+                    <?= e($item["trip_time"]) ?> · <?= e($item["title"]) ?>
                 </strong>
 
                 <p>
-                    {{ item.detail or item.trip_date }}
+                    <?= e($item["detail"] ?: $item["trip_date"]) ?>
                 </p>
             </div>
 
         </div>
-        {% endfor %}
+        <?php endforeach; ?>
         </section>
     </main>
 
     <nav class="bottom-nav" aria-label="Điều hướng chính">
-        <a href="/" class="active-nav" aria-label="Trang chủ"><i data-lucide="house"></i><span>Trang chủ</span></a>
-        <a href="/expenses" aria-label="Chi phí"><i data-lucide="wallet"></i><span>Chi phí</span></a>
-        <a href="/gallery" aria-label="Thư viện ảnh"><i data-lucide="images"></i><span>Ảnh</span></a>
-        <a href="/ai" aria-label="Trợ lý du lịch"><i data-lucide="bot"></i><span>Trợ lý</span></a>
-        <a href="/map" aria-label="Lịch trình"><i data-lucide="route"></i><span>Lịch</span></a>
+        <a href="<?= app_url('/') ?>" class="active-nav" aria-label="Trang chủ"><i data-lucide="house"></i><span>Trang chủ</span></a>
+        <a href="<?= app_url('/expenses') ?>" aria-label="Chi phí"><i data-lucide="wallet"></i><span>Chi phí</span></a>
+        <a href="<?= app_url('/gallery') ?>" aria-label="Thư viện ảnh"><i data-lucide="images"></i><span>Ảnh</span></a>
+        <a href="<?= app_url('/ai') ?>" aria-label="Trợ lý du lịch"><i data-lucide="bot"></i><span>Trợ lý</span></a>
+        <a href="<?= app_url('/map') ?>" aria-label="Lịch trình"><i data-lucide="route"></i><span>Lịch</span></a>
     </nav>
 
     <script>
         window.TRIP_MEMBERS = ["Long", "Hoa", "Lan", "Linh", "LAnh"];
         window.HOME_WEATHER = {
-            main: {{ weather_main|tojson }},
-            description: {{ weather_desc|tojson }},
-            temp: {{ current.main.temp | round }},
-            feelsLike: {{ current.main.feels_like | round }},
-            humidity: {{ current.main.humidity }},
-            wind: {{ current.wind.speed }},
+            main: <?= json_encode($weather_main, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>,
+            description: <?= json_encode($weather_desc, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>,
+            temp: <?= round($current["main"]["temp"] ?? 0) ?>,
+            feelsLike: <?= round($current["main"]["feels_like"] ?? 0) ?>,
+            humidity: <?= (int) ($current["main"]["humidity"] ?? 0) ?>,
+            wind: <?= (int) ($current["wind"]["speed"] ?? 0) ?>,
             location: "Cô Tô, Quảng Ninh",
-            forecast: [
-                {% for item in forecast.list %}
-                {
-                    date: {{ item.dt_txt[:10]|tojson }},
-                    temp: {{ item.main.temp | round }},
-                    main: {{ item.weather[0].main|tojson }}
-                }{% if not loop.last %},{% endif %}
-                {% endfor %}
-            ]
+            forecast: <?= json_encode(array_map(fn($item) => ["date" => substr($item["dt_txt"], 0, 10), "temp" => round($item["main"]["temp"]), "main" => $item["weather"][0]["main"] ?? "Clear"], $forecast["list"] ?? []), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>
         };
     </script>
+    <script>window.APP_BASE_URL = <?= json_encode(app_base_path(), JSON_UNESCAPED_SLASHES) ?>;</script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="<?= static_url('script.js') ?>"></script>
 </body>
 
 </html>

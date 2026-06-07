@@ -8,10 +8,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="icon"type="image/jpeg" href="{{ url_for('static', filename='images/logo.jpg') }}">
-    <link rel="apple-touch-icon" href="{{ url_for('static', filename='images/logo.jpg') }}">
-    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+    <link rel="stylesheet" href="<?= static_url('style.css') ?>">
+    <link rel="icon"type="image/jpeg" href="<?= static_url('images/logo.jpg') ?>">
+    <link rel="apple-touch-icon" href="<?= static_url('images/logo.jpg') ?>">
+    <link rel="manifest" href="<?= static_url('manifest.json') ?>">
 </head>
 
 <body class="app-body gallery-app">
@@ -108,18 +108,19 @@
     </div>
 
     <nav class="bottom-nav" aria-label="Điều hướng chính">
-        <a href="/" aria-label="Trang chủ"><i data-lucide="house"></i><span>Trang chủ</span></a>
-        <a href="/expenses" aria-label="Chi phí"><i data-lucide="wallet"></i><span>Chi phí</span></a>
-        <a href="/gallery" class="active-nav" aria-label="Thư viện ảnh"><i data-lucide="images"></i><span>Ảnh</span></a>
-        <a href="/ai" aria-label="Trợ lý du lịch"><i data-lucide="bot"></i><span>Trợ lý</span></a>
-        <a href="/map" aria-label="Lịch trình"><i data-lucide="route"></i><span>Lịch</span></a>
+        <a href="<?= app_url('/') ?>" aria-label="Trang chủ"><i data-lucide="house"></i><span>Trang chủ</span></a>
+        <a href="<?= app_url('/expenses') ?>" aria-label="Chi phí"><i data-lucide="wallet"></i><span>Chi phí</span></a>
+        <a href="<?= app_url('/gallery') ?>" class="active-nav" aria-label="Thư viện ảnh"><i data-lucide="images"></i><span>Ảnh</span></a>
+        <a href="<?= app_url('/ai') ?>" aria-label="Trợ lý du lịch"><i data-lucide="bot"></i><span>Trợ lý</span></a>
+        <a href="<?= app_url('/map') ?>" aria-label="Lịch trình"><i data-lucide="route"></i><span>Lịch</span></a>
     </nav>
     <script>
-    window.GALLERY_IMAGES = {{ gallery_items|tojson }};
-    window.TRIP_MEMBERS = {{ members|tojson }};
+    window.GALLERY_IMAGES = <?= json_encode($gallery_items, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
+    window.TRIP_MEMBERS = <?= json_encode($members, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
     </script>
+    <script>window.APP_BASE_URL = <?= json_encode(app_base_path(), JSON_UNESCAPED_SLASHES) ?>;</script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
-    <script src="{{ url_for('static', filename='script.js') }}?v=8"></script>
+    <script src="<?= static_url('script.js') ?>?v=8"></script>
     
 </body>
 

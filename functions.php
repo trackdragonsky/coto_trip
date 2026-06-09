@@ -164,6 +164,30 @@ function get_itinerary(int $id): ?array {
 }
 function get_ai_messages(int $limit = 80): array { return query_all('SELECT id,sender,message,created_at FROM ai_messages ORDER BY created_at ASC, id ASC LIMIT ' . (int)$limit); }
 function save_ai_message(string $sender, string $message): int { return execute_sql('INSERT INTO ai_messages(sender,message) VALUES(?,?)', [$sender, $message]); }
+function daily_forecast_items(array $items, int $days = 4): array {
+    $today = date('Y-m-d');
+    $byDate = [];
+
+    foreach ($items as $item) {
+        $date = substr((string) ($item['dt_txt'] ?? ''), 0, 10);
+
+        if (!$date || $date <= $today) {
+            continue;
+        }
+
+        $hour = (int) substr((string) ($item['dt_txt'] ?? '12:00:00'), 11, 2);
+        $score = abs($hour - 12);
+
+        if (!isset($byDate[$date]) || $score < $byDate[$date]['score']) {
+            $byDate[$date] = ['score' => $score, 'item' => $item];
+        }
+    }
+
+    ksort($byDate);
+
+    return array_values(array_slice(array_map(fn($entry) => $entry['item'], $byDate), 0, $days));
+}
+
 function fallback_weather(): array {
     $list = [];
     for ($i=1; $i<=4; $i++) $list[] = ['dt_txt'=>date('Y-m-d 12:00:00', strtotime("+$i day")), 'main'=>['temp'=>28 + ($i % 3)], 'weather'=>[['main'=>'Clear', 'description'=>'Trời đẹp']]];
@@ -177,6 +201,6 @@ function get_weather(): array {
     $forecast = @json_decode(@file_get_contents("https://api.openweathermap.org/data/2.5/forecast?$params"), true);
     if (!$current || empty($current['weather']) || empty($forecast['list'])) return fallback_weather();
     $current['wind']['speed'] = (int) round(($current['wind']['speed'] ?? 0) * 3.6);
-    return [$current, ['list'=>array_slice($forecast['list'], 0, 4)]];
+    return [$current, ['list'=>daily_forecast_items($forecast['list'])]];
 }
 function read_json_body(): array { return json_decode(file_get_contents('php://input'), true) ?: []; }

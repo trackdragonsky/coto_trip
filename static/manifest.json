@@ -1,0 +1,17 @@
+{
+    "name": "Cô Tô 2026",
+    "short_name": "Cô Tô",
+    "start_url": "../",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#2563eb",
+    "orientation": "portrait",
+    "icons": [
+        {
+            "src": "images/logo.jpg",
+            "sizes": "512x512",
+            "type": "image/jpeg"
+        }
+    ],
+    "scope": "../"
+}

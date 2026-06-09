@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Lịch trình chi tiết</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="<?= e(url('/static/style.css')) ?>">
+    <link rel="icon"type="image/jpeg" href="<?= e(url('/static/images/logo.jpg')) ?>">
+    <link rel="apple-touch-icon" href="<?= e(url('/static/images/logo.jpg')) ?>">
+    <link rel="manifest" href="<?= e(url('/static/manifest.json')) ?>">
+</head>
+
+<body class="app-body itinerary-app">
+    <main class="mobile-shell itinerary-shell">
+        <header class="itinerary-cover">
+            <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80" alt="Biển Cô Tô" loading="eager">
+            <div class="cover-overlay">
+                <p class="eyebrow">Lịch trình</p>
+                <h1>Cô Tô 2026</h1>
+                <p class="trip-description">Lịch trình chi tiết của chuyến đi</p>
+            </div>
+        </header>
+
+        <section class="sticky-toolbar">
+            <div>
+                <p class="eyebrow">Theo ngày</p>
+                <h2>Lịch trình chi tiết</h2>
+            </div>
+            <button id="open-itinerary-modal" class="icon-action" type="button" aria-label="Thêm lịch trình">
+                <i data-lucide="plus"></i>
+            </button>
+        </section>
+
+        <section id="itinerary-timeline" class="timeline-list" aria-label="Danh sách lịch trình"></section>
+    </main>
+
+    <div id="itinerary-modal" class="sheet-modal" aria-hidden="true">
+        <div class="sheet-panel">
+            <div class="sheet-handle"></div>
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">Lịch trình</p>
+                    <h2 id="itinerary-modal-title">Thêm lịch trình</h2>
+                </div>
+                <button class="ghost-icon" id="close-itinerary-modal" type="button" aria-label="Đóng">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+
+            <form id="itinerary-form" class="itinerary-form">
+                <input type="hidden" id="itinerary-id">
+
+                <label class="field-label" for="itinerary-title">Tên hoạt động</label>
+                <input id="itinerary-title" required placeholder="Tàu cao tốc ra đảo">
+
+                <div class="two-col">
+                    <div>
+                        <label class="field-label" for="itinerary-date">Ngày</label>
+                        <input id="itinerary-date" type="date" required>
+                    </div>
+                    <div>
+                        <label class="field-label" for="itinerary-time">Giờ</label>
+                        <input id="itinerary-time" type="time" required>
+                    </div>
+                </div>
+
+                <label class="field-label" for="itinerary-type">Loại hoạt động</label>
+                <select id="itinerary-type">
+                    <option>Di chuyển</option>
+                    <option>Khách sạn</option>
+                    <option>Ăn uống</option>
+                    <option>Chụp ảnh</option>
+                    <option>Vui chơi</option>
+                    <option>Nghỉ ngơi</option>
+                </select>
+
+                <label class="field-label" for="itinerary-detail">Chi tiết</label>
+                <textarea id="itinerary-detail" rows="3" placeholder="Bến Vân Đồn, giữ căn cước để làm thủ tục"></textarea>
+
+                <button class="primary-action" type="submit">
+                    <i data-lucide="calendar-plus"></i>
+                    Lưu lịch trình
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <nav class="bottom-nav" aria-label="Điều hướng chính">
+        <a href="<?= e(url('/')) ?>" aria-label="Trang chủ"><i data-lucide="house"></i><span>Trang chủ</span></a>
+        <a href="<?= e(url('/expenses')) ?>" aria-label="Chi phí"><i data-lucide="wallet"></i><span>Chi phí</span></a>
+        <a href="<?= e(url('/gallery')) ?>" aria-label="Thư viện ảnh"><i data-lucide="images"></i><span>Ảnh</span></a>
+        <a href="<?= e(url('/ai')) ?>" aria-label="Trợ lý du lịch"><i data-lucide="bot"></i><span>Trợ lý</span></a>
+        <a href="<?= e(url('/map')) ?>" class="active-nav" aria-label="Lịch trình"><i data-lucide="route"></i><span>Lịch</span></a>
+    </nav>
+    <script>
+    window.ITINERARIES = <?= json_encode($itineraries, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
+    window.TRIP_MEMBERS = <?= json_encode($members, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
+    </script>   
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <script>window.APP_BASE_URL = <?= json_encode(base_path(), JSON_UNESCAPED_SLASHES) ?>;</script>
+    <script src="<?= e(url('/static/script.js')) ?>"></script>
+</body>
+
+</html>

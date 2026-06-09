@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Trợ lý du lịch</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="<?= e(url('/static/style.css')) ?>">
+    <link rel="icon"type="image/jpeg" href="<?= e(url('/static/images/logo.jpg')) ?>">
+    <link rel="apple-touch-icon" href="<?= e(url('/static/images/logo.jpg')) ?>">
+    <link rel="manifest" href="<?= e(url('/static/manifest.json')) ?>">
+</head>
+
+<body class="app-body ai-app">
+
+    <main class="mobile-shell ai-shell">
+        <header class="ai-companion-header">
+            <div class="ai-avatar-large">
+                <i data-lucide="bot"></i>
+            </div>
+            <div>
+                <p class="eyebrow">Trợ lý</p>
+                <h1>Gợi ý du lịch</h1>
+                <p>Lên lịch trình, dự trù chi phí, chọn món ăn và điểm chụp ảnh phù hợp với chuyến đi.</p>
+            </div>
+        </header>
+
+        <section class="prompt-panel" aria-label="Gợi ý câu hỏi">
+            <button class="prompt-chip" type="button" data-prompt="Ăn gì ở Cô Tô?">
+                <i data-lucide="utensils"></i>
+                Ăn gì ở Cô Tô?
+            </button>
+            <button class="prompt-chip" type="button" data-prompt="Lịch trình 3 ngày ở Cô Tô">
+                <i data-lucide="calendar-days"></i>
+                Lịch trình 3 ngày
+            </button>
+            <button class="prompt-chip" type="button" data-prompt="Dự trù chi phí chuyến đi">
+                <i data-lucide="wallet"></i>
+                Dự trù chi phí
+            </button>
+            <button class="prompt-chip" type="button" data-prompt="Điểm chụp ảnh đẹp ở Cô Tô">
+                <i data-lucide="map-pin"></i>
+                Điểm chụp ảnh đẹp
+            </button>
+        </section>
+
+        <section class="chat-panel" aria-label="Tin nhắn với trợ lý">
+            <div class="ai-status-pill">
+                <span></span>
+                Trợ lý đang sẵn sàng
+            </div>
+            <div id="chat-box" class="chat-message-list"></div>
+        </section>
+    </main>
+
+    <form id="chat-form" class="chat-input-bar" aria-label="Ô nhập tin nhắn">
+        <textarea id="chat-input" rows="1" placeholder="Hỏi trợ lý du lịch..." aria-label="Nội dung tin nhắn"></textarea>
+        <button id="chat-send-button" type="submit" aria-label="Gửi tin nhắn">
+            <i data-lucide="send"></i>
+        </button>
+    </form>
+
+    <nav class="bottom-nav" aria-label="Điều hướng chính">
+        <a href="<?= e(url('/')) ?>" aria-label="Trang chủ"><i data-lucide="house"></i><span>Trang chủ</span></a>
+        <a href="<?= e(url('/expenses')) ?>" aria-label="Chi phí"><i data-lucide="wallet"></i><span>Chi phí</span></a>
+        <a href="<?= e(url('/gallery')) ?>" aria-label="Thư viện ảnh"><i data-lucide="images"></i><span>Ảnh</span></a>
+        <a href="<?= e(url('/ai')) ?>" class="active-nav" aria-label="Trợ lý du lịch"><i data-lucide="bot"></i><span>Trợ lý</span></a>
+        <a href="<?= e(url('/map')) ?>" aria-label="Lịch trình"><i data-lucide="route"></i><span>Lịch</span></a>
+    </nav>
+
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <script>window.APP_BASE_URL = <?= json_encode(base_path(), JSON_UNESCAPED_SLASHES) ?>;</script>
+    <script src="<?= e(url('/static/script.js')) ?>"></script>
+</body>
+
+</html>

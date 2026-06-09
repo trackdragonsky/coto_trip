@@ -27,6 +27,10 @@
                 <p id="home-greeting" class="eyebrow">Chào buổi sáng</p>
                 <h1>Cô Tô 2026</h1>
                 <p>Không gian theo dõi chuyến đi của Long, Hoa, Lan, Linh, LAnh và Bắc.</p>
+                <div class="hero-meta-row" aria-label="Thông tin nhanh chuyến đi">
+                    <span><i data-lucide="calendar-days"></i> 13/06/2026</span>
+                    <span><i data-lucide="users-round"></i> <?= count($members) ?> thành viên</span>
+                </div>
                 <div class="trip-countdown" aria-label="Đếm ngược đến ngày khởi hành">
                     <div><strong id="home-days">0</strong><span>Ngày</span></div>
                     <div><strong id="home-hours">0</strong><span>Giờ</span></div>
@@ -70,15 +74,13 @@
 
                 <?php foreach ($members as $member): ?>
                 <div class="member-card">
-
                     <img
-                        src="<?= e($member["avatar"]) ?>"
+                        src="<?= e(asset_url($member["avatar"])) ?>"
                         alt="<?= e($member["name"]) ?>"
                         class="member-avatar"
                     >
-
                     <span><?= e($member["name"]) ?></span>
-
+                    <small>Thành viên</small>
                 </div>
                 <?php endforeach; ?>
 

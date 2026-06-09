@@ -151,7 +151,7 @@
             humidity: <?= (int) ($current["main"]["humidity"] ?? 0) ?>,
             wind: <?= (int) ($current["wind"]["speed"] ?? 0) ?>,
             location: "Cô Tô, Quảng Ninh",
-            forecast: <?= json_encode(array_map(fn($item) => ["date" => substr($item["dt_txt"], 0, 10), "temp" => round($item["main"]["temp"]), "main" => $item["weather"][0]["main"] ?? "Clear"], $forecast["list"] ?? []), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>
+            forecast: <?= json_encode(array_map(fn($item) => ["date" => substr($item["dt_txt"], 0, 10), "temp" => round($item["main"]["temp"]), "main" => $item["weather"][0]["main"] ?? "Clear", "description" => $item["weather"][0]["description"] ?? "Trời đẹp"], $forecast["list"] ?? []), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>
         };
     </script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>

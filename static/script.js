@@ -1261,6 +1261,24 @@ function HeroSection(){
     window.setInterval(updateCountdown, 30000);
 }
 
+function formatForecastDate(date, index){
+    if(index === 0){
+        return "Ngày mai";
+    }
+
+    const parsedDate = new Date(`${date}T00:00:00`);
+
+    if(Number.isNaN(parsedDate.getTime())){
+        return date;
+    }
+
+    return new Intl.DateTimeFormat("vi-VN", {
+        weekday:"short",
+        day:"2-digit",
+        month:"2-digit"
+    }).format(parsedDate);
+}
+
 function WeatherWidget(){
     const container = document.getElementById("weather-widget");
     const weather = window.HOME_WEATHER;
@@ -1269,12 +1287,13 @@ function WeatherWidget(){
         return;
     }
 
-    const forecast = (weather.forecast || []).map((item) => `
-        <div class="mini-forecast-item">
-            <span>${item.date}</span>
+    const forecastItems = (weather.forecast || []).slice(0, 4);
+    const forecast = forecastItems.map((item, index) => `
+        <article class="mini-forecast-item">
+            <span>${formatForecastDate(item.date, index)}</span>
             <i data-lucide="${getWeatherIcon(item.main)}"></i>
             <strong>${item.temp}°</strong>
-        </div>
+        </article>
     `).join("");
 
     container.innerHTML = `
@@ -1285,10 +1304,11 @@ function WeatherWidget(){
                 <div class="weather-temp-large">${weather.temp}°C</div>
                 <p>${weather.description} · Cảm giác ${weather.feelsLike}° · Gió ${weather.wind} km/h</p>
             </div>
-            <div class="weather-icon-premium">
+            <div class="weather-icon-premium" aria-hidden="true">
                 <i data-lucide="${getWeatherIcon(weather.main)}"></i>
             </div>
         </div>
+        <div class="mini-forecast-heading">4 ngày tiếp theo</div>
         <div class="mini-forecast">${forecast}</div>
     `;
 }

@@ -2203,25 +2203,24 @@ HOME + AI PREMIUM PAGES
     font-feature-settings:"tnum";
 }
 
-.mini-forecast{
-    display:flex;
-    gap:9px;
-    margin:18px -4px 0;
-    padding:0 4px 2px;
-    overflow-x:auto;
-    overflow-y:hidden;
-    scrollbar-width:none;
-    scroll-snap-type:x proximity;
+.mini-forecast-heading{
+    margin-top:18px;
+    color:rgba(37,99,235,0.78);
+    font-size:0.66rem;
+    font-weight:900;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
 }
 
-.mini-forecast::-webkit-scrollbar{
-    display:none;
+.mini-forecast{
+    display:grid;
+    grid-template-columns:repeat(4, minmax(0, 1fr));
+    gap:9px;
+    margin-top:10px;
 }
 
 .mini-forecast-item{
-    min-width:84px;
     min-height:88px;
-    flex:0 0 84px;
     display:grid;
     place-items:center;
     gap:5px;
@@ -2237,7 +2236,6 @@ HOME + AI PREMIUM PAGES
     color:var(--app-text);
     font-size:0.76rem;
     font-weight:800;
-    scroll-snap-align:start;
     transform:translateZ(0);
     transition:transform 170ms ease, box-shadow 170ms ease, background-color 170ms ease;
 }
@@ -2834,6 +2832,7 @@ HOME + AI PREMIUM PAGES
     }
 
     .weather-widget p:not(.eyebrow),
+    .mini-forecast-heading,
     .mini-forecast-item span{
         color:rgba(226,232,240,0.72);
     }
@@ -2958,9 +2957,7 @@ HOME + AI PREMIUM PAGES
     }
 
     .mini-forecast-item{
-        min-width:80px;
         min-height:84px;
-        flex-basis:80px;
         font-size:0.72rem;
     }
 
@@ -3027,8 +3024,9 @@ HOME + AI PREMIUM PAGES
     }
 
     .mini-forecast-item{
-        min-width:78px;
-        flex-basis:78px;
+        min-height:80px;
+        padding-left:6px;
+        padding-right:6px;
     }
 
     .stat-card{

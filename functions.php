@@ -38,11 +38,37 @@ function json_out($data, int $status = 200): void {
     echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
+function base_path(): string {
+    $scriptName = str_replace('\\', '/', $_SERVER['SCRIPT_NAME'] ?? '');
+    $base = rtrim(str_replace('\\', '/', dirname($scriptName)), '/');
+    return ($base === '' || $base === '.') ? '' : $base;
+}
+
+function url(string $path = ''): string {
+    $base = base_path();
+    if ($path === '' || $path === '/') return $base === '' ? '/' : $base . '/';
+    if (preg_match('#^(https?://|//)#', $path)) return $path;
+    return $base . '/' . ltrim($path, '/');
+}
+
+function request_path(): string {
+    $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
+    $path = '/' . ltrim(str_replace('\\', '/', $path), '/');
+    $base = base_path();
+    if ($base !== '' && ($path === $base || strpos($path, $base . '/') === 0)) {
+        $path = substr($path, strlen($base)) ?: '/';
+    }
+    if ($path === '/index.php' || strpos($path, '/index.php/') === 0) {
+        $path = substr($path, strlen('/index.php')) ?: '/';
+    }
+    return '/' . trim($path, '/');
+}
+
 function asset_url(?string $value): string {
     if (!$value) return '';
     $path = str_replace('\\', '/', $value);
-    if (preg_match('#^(https?://|/)#', $path)) return $path;
-    return '/' . $path;
+    if (preg_match('#^(https?://|//)#', $path)) return $path;
+    return url($path);
 }
 function money_to_int($value): int { return (int) round((float) ($value ?? 0)); }
 function parse_amount($value): float {
@@ -62,12 +88,12 @@ function render(string $view, array $data = []): void {
 }
 function default_members(): array {
     return [
-        ['name' => 'Long', 'avatar' => '/static/images/long.jpg', 'avatar_url' => '/static/images/long.jpg'],
-        ['name' => 'Hoa', 'avatar' => '/static/images/hoa.jpg', 'avatar_url' => '/static/images/hoa.jpg'],
-        ['name' => 'Linh', 'avatar' => '/static/images/linh.jpg', 'avatar_url' => '/static/images/linh.jpg'],
-        ['name' => 'LAnh', 'avatar' => '/static/images/lanh.jpg', 'avatar_url' => '/static/images/lanh.jpg'],
-        ['name' => 'Lan', 'avatar' => '/static/images/lan.jpg', 'avatar_url' => '/static/images/lan.jpg'],
-        ['name' => 'Bắc', 'avatar' => '/static/images/bac.jpg', 'avatar_url' => '/static/images/bac.jpg'],
+        ['name' => 'Long', 'avatar' => 'static/images/long.jpg', 'avatar_url' => asset_url('static/images/long.jpg')],
+        ['name' => 'Hoa', 'avatar' => 'static/images/hoa.jpg', 'avatar_url' => asset_url('static/images/hoa.jpg')],
+        ['name' => 'Linh', 'avatar' => 'static/images/linh.jpg', 'avatar_url' => asset_url('static/images/linh.jpg')],
+        ['name' => 'LAnh', 'avatar' => 'static/images/lanh.jpg', 'avatar_url' => asset_url('static/images/lanh.jpg')],
+        ['name' => 'Lan', 'avatar' => 'static/images/lan.jpg', 'avatar_url' => asset_url('static/images/lan.jpg')],
+        ['name' => 'Bắc', 'avatar' => 'static/images/bac.jpg', 'avatar_url' => asset_url('static/images/bac.jpg')],
     ];
 }
 function serialize_member(array $row): array {

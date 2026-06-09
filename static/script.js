@@ -1,4 +1,40 @@
 // =========================
+// APP URL HELPERS
+// =========================
+
+function appBaseUrl(){
+
+    return (window.APP_BASE_URL || "").replace(/\/$/, "");
+
+}
+
+function appUrl(path = "/"){
+
+    if(/^https?:\/\//.test(path) || path.startsWith("//")){
+        return path;
+    }
+
+    const normalized = `/${String(path).replace(/^\/+/, "")}`;
+    const base = appBaseUrl();
+
+    return normalized === "/" ? `${base}/` : `${base}${normalized}`;
+
+}
+
+function appPath(){
+
+    const base = appBaseUrl();
+    let path = window.location.pathname || "/";
+
+    if(base && (path === base || path.startsWith(`${base}/`))){
+        path = path.slice(base.length) || "/";
+    }
+
+    return `/${path.replace(/^\/+|\/+$/g, "")}`;
+
+}
+
+// =========================
 // SMALL UI HELPERS
 // =========================
 
@@ -76,7 +112,7 @@ let expenseReloadScheduled = false;
 
 function scheduleExpenseReload(){
 
-    if(expenseReloadScheduled || window.location.pathname !== "/expenses"){
+    if(expenseReloadScheduled || appPath() !== "/expenses"){
         return;
     }
 
@@ -101,13 +137,13 @@ function initExpenseSocket(){
     });
 
     expenseSocket.on("connect", () => {
-        if(window.location.pathname === "/expenses"){
+        if(appPath() === "/expenses"){
             showIsland("Đã kết nối chi phí");
         }
     });
 
     expenseSocket.on("connect_error", () => {
-        if(window.location.pathname === "/expenses"){
+        if(appPath() === "/expenses"){
             showIsland("Mất kết nối trực tiếp");
         }
     });
@@ -519,7 +555,7 @@ async function addExpense(){
     formData.append("amount", String(amount));
 
     try{
-        const response = await fetch("/add_expense", {
+        const response = await fetch(appUrl("/add_expense"), {
             method:"POST",
             body:formData
         });
@@ -557,7 +593,7 @@ async function deleteExpense(id){
 
     try{
 
-        const response = await fetch(`/delete_expense/${id}`,{
+        const response = await fetch(appUrl(`/delete_expense/${id}`),{
             method:"DELETE"
         });
 
@@ -678,7 +714,7 @@ async ()=>{
 
         const response =
             await fetch(
-                "/add_collection",
+                appUrl("/add_collection"),
                 {
                     method:"POST",
                     body:formData
@@ -718,7 +754,7 @@ async function deleteCollection(id){
 
         const response =
             await fetch(
-                `/delete_collection/${id}`,
+                appUrl(`/delete_collection/${id}`),
                 {
                     method:"DELETE"
                 }
@@ -790,7 +826,7 @@ function GalleryUploader() {
         try {
 
             const response = await fetch(
-                "/upload_gallery",
+                appUrl("/upload_gallery"),
                 {
                     method: "POST",
                     body: formData
@@ -1289,28 +1325,28 @@ function QuickActionCard(){
 
     const actions = [
         {
-            href:"/expenses",
+            href:appUrl("/expenses"),
             title:"Chi phí",
             subtitle:"Chia tiền nhóm",
             icon:"wallet",
             color:"#2563eb"
         },
         {
-            href:"/gallery",
+            href:appUrl("/gallery"),
             title:"Thư viện ảnh",
             subtitle:"Kỷ niệm chuyến đi",
             icon:"images",
             color:"#ec4899"
         },
         {
-            href:"/ai",
+            href:appUrl("/ai"),
             title:"Trợ lý",
             subtitle:"Gợi ý thông minh",
             icon:"bot",
             color:"#7c3aed"
         },
         {
-            href:"/map",
+            href:appUrl("/map"),
             title:"Lịch trình",
             subtitle:"Theo dõi chi tiết",
             icon:"route",
@@ -1456,7 +1492,7 @@ async function sendMessage(){
     }
 
     try{
-        const response = await fetch("/chatbot", {
+        const response = await fetch(appUrl("/chatbot"), {
             method:"POST",
             headers:{
                 "Content-Type":"application/json"
@@ -1789,10 +1825,10 @@ document
 
     try {
 
-        let url = "/add_itinerary";
+        let url = appUrl("/add_itinerary");
 
         if (id) {
-            url = `/update_itinerary/${id}`;
+            url = appUrl(`/update_itinerary/${id}`);
         }
 
         const res = await fetch(url, {
@@ -1847,7 +1883,7 @@ function bindDeleteButtons(){
             }
 
             const res = await fetch(
-                `/delete_itinerary/${id}`,
+                appUrl(`/delete_itinerary/${id}`),
                 {
                     method:"POST"
                 }

@@ -5,9 +5,9 @@
 ## Cài đặt nhanh
 
 1. Upload toàn bộ mã nguồn lên hosting PHP.
-2. Vào phpMyAdmin và import file `db.sql`.
-3. Sửa `config.php` hoặc đặt biến môi trường `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`.
-4. Trỏ document root vào thư mục dự án. File `.htaccess` sẽ route các URL như `/expenses`, `/gallery`, `/map`, `/ai` về `index.php`.
+2. Trong phpMyAdmin của XAMPP, tạo database tên `db` rồi import file `db.sql`.
+3. Nếu dùng tên database khác, sửa `config.php` hoặc đặt biến môi trường `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`. Mặc định dự án dùng `DB_NAME=db`, user `root`, mật khẩu rỗng theo XAMPP.
+4. Đặt thư mục dự án trong `htdocs` (ví dụ `htdocs/coto_trip`) hoặc trỏ document root vào thư mục dự án. Ứng dụng tự nhận base path `/coto_trip` khi chạy trong thư mục con và file `.htaccess` sẽ route các URL như `/expenses`, `/gallery`, `/map`, `/ai` về `index.php`.
 
 ## API tùy chọn
 

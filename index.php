@@ -1,7 +1,7 @@
 <?php
 require __DIR__ . '/functions.php';
 
-$path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?: '/';
+$path = request_path();
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
 try {

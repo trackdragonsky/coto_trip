@@ -8,10 +8,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/static/style.css">
-    <link rel="icon"type="image/jpeg" href="/static/images/logo.jpg">
-    <link rel="apple-touch-icon" href="/static/images/logo.jpg">
-    <link rel="manifest" href="/static/manifest.json">
+    <link rel="stylesheet" href="<?= e(url('/static/style.css')) ?>">
+    <link rel="icon"type="image/jpeg" href="<?= e(url('/static/images/logo.jpg')) ?>">
+    <link rel="apple-touch-icon" href="<?= e(url('/static/images/logo.jpg')) ?>">
+    <link rel="manifest" href="<?= e(url('/static/manifest.json')) ?>">
 </head>
 
 
@@ -101,7 +101,7 @@
                     <p class="eyebrow">Sắp tới</p>
                     <h2>Lịch trình gần nhất</h2>
                 </div>
-                <a class="text-link" href="/map">Mở</a>
+                <a class="text-link" href="<?= e(url('/map')) ?>">Mở</a>
             </div>
             <?php
             $icon_map = ["Di chuyển"=>"bus-front", "Khách sạn"=>"hotel", "Ăn uống"=>"utensils-crossed", "Chụp ảnh"=>"camera", "Vui chơi"=>"party-popper", "Nghỉ ngơi"=>"bed"];
@@ -134,11 +134,11 @@
     </main>
 
     <nav class="bottom-nav" aria-label="Điều hướng chính">
-        <a href="/" class="active-nav" aria-label="Trang chủ"><i data-lucide="house"></i><span>Trang chủ</span></a>
-        <a href="/expenses" aria-label="Chi phí"><i data-lucide="wallet"></i><span>Chi phí</span></a>
-        <a href="/gallery" aria-label="Thư viện ảnh"><i data-lucide="images"></i><span>Ảnh</span></a>
-        <a href="/ai" aria-label="Trợ lý du lịch"><i data-lucide="bot"></i><span>Trợ lý</span></a>
-        <a href="/map" aria-label="Lịch trình"><i data-lucide="route"></i><span>Lịch</span></a>
+        <a href="<?= e(url('/')) ?>" class="active-nav" aria-label="Trang chủ"><i data-lucide="house"></i><span>Trang chủ</span></a>
+        <a href="<?= e(url('/expenses')) ?>" aria-label="Chi phí"><i data-lucide="wallet"></i><span>Chi phí</span></a>
+        <a href="<?= e(url('/gallery')) ?>" aria-label="Thư viện ảnh"><i data-lucide="images"></i><span>Ảnh</span></a>
+        <a href="<?= e(url('/ai')) ?>" aria-label="Trợ lý du lịch"><i data-lucide="bot"></i><span>Trợ lý</span></a>
+        <a href="<?= e(url('/map')) ?>" aria-label="Lịch trình"><i data-lucide="route"></i><span>Lịch</span></a>
     </nav>
 
     <script>
@@ -155,7 +155,8 @@
         };
     </script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
-    <script src="/static/script.js"></script>
+    <script>window.APP_BASE_URL = <?= json_encode(base_path(), JSON_UNESCAPED_SLASHES) ?>;</script>
+    <script src="<?= e(url('/static/script.js')) ?>"></script>
 </body>
 
 </html>

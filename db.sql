@@ -1,11 +1,11 @@
 -- Database export for the PHP version of Cô Tô Trip.
--- Import this file in phpMyAdmin, then update config.php or environment variables if needed.
+-- Import this file in phpMyAdmin/XAMPP; it creates and uses the `db` database by default.
 
-CREATE DATABASE IF NOT EXISTS `coto_trip`
+CREATE DATABASE IF NOT EXISTS `db`
   CHARACTER SET utf8mb4
   COLLATE utf8mb4_unicode_ci;
 
-USE `coto_trip`;
+USE `db`;
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;

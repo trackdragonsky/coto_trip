@@ -1261,36 +1261,64 @@ function HeroSection(){
     window.setInterval(updateCountdown, 30000);
 }
 
-function formatForecastDate(date, index){
-    if(index === 0){
+const WEATHER_TIME_ZONE = "Asia/Ho_Chi_Minh";
+
+function weatherLocalDate(date = new Date()){
+    const parts = new Intl.DateTimeFormat("en-CA", {
+        timeZone: WEATHER_TIME_ZONE,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+    }).formatToParts(date).reduce((acc, part) => {
+        acc[part.type] = part.value;
+        return acc;
+    }, {});
+
+    return `${parts.year}-${parts.month}-${parts.day}`;
+}
+
+function addWeatherDays(date, days){
+    const [year, month, day] = String(date).split("-").map(Number);
+
+    if(!year || !month || !day){
+        return date;
+    }
+
+    return weatherLocalDate(new Date(Date.UTC(year, month - 1, day + days, 12)));
+}
+
+function formatForecastDate(date){
+    const today = weatherLocalDate();
+
+    if(date === addWeatherDays(today, 1)){
         return "Ngày mai";
     }
 
-    const parsedDate = new Date(`${date}T00:00:00`);
+    const parsedDate = new Date(`${date}T00:00:00+07:00`);
 
     if(Number.isNaN(parsedDate.getTime())){
         return date;
     }
 
     return new Intl.DateTimeFormat("vi-VN", {
+        timeZone: WEATHER_TIME_ZONE,
         weekday:"short",
         day:"2-digit",
         month:"2-digit"
     }).format(parsedDate);
 }
 
-function WeatherWidget(){
+function renderWeatherWidget(weather){
     const container = document.getElementById("weather-widget");
-    const weather = window.HOME_WEATHER;
 
     if(!container || !weather){
         return;
     }
 
     const forecastItems = (weather.forecast || []).slice(0, 4);
-    const forecast = forecastItems.map((item, index) => `
+    const forecast = forecastItems.map((item) => `
         <article class="mini-forecast-item">
-            <span>${formatForecastDate(item.date, index)}</span>
+            <span>${formatForecastDate(item.date)}</span>
             <i data-lucide="${getWeatherIcon(item.main)}"></i>
             <strong>${item.temp}°</strong>
         </article>
@@ -1311,6 +1339,48 @@ function WeatherWidget(){
         <div class="mini-forecast-heading">4 ngày tiếp theo</div>
         <div class="mini-forecast">${forecast}</div>
     `;
+
+    refreshIcons();
+}
+
+async function fetchLatestWeather(){
+    const response = await fetch(appUrl("/api/weather"), { cache: "no-store" });
+
+    if(!response.ok){
+        throw new Error("Không thể tải thời tiết mới nhất");
+    }
+
+    return response.json();
+}
+
+function scheduleWeatherRefresh(){
+    let renderedDate = window.HOME_WEATHER?.date || weatherLocalDate();
+
+    const refreshWeather = async (force = false) => {
+        const currentDate = weatherLocalDate();
+
+        if(!force && currentDate === renderedDate){
+            return;
+        }
+
+        try{
+            const weather = await fetchLatestWeather();
+            window.HOME_WEATHER = weather;
+            renderedDate = weather.date || currentDate;
+            renderWeatherWidget(weather);
+        }catch(error){
+            console.warn(error);
+        }
+    };
+
+    refreshWeather(true);
+    window.setInterval(() => refreshWeather(false), 60 * 1000);
+    window.setInterval(() => refreshWeather(true), 30 * 60 * 1000);
+}
+
+function WeatherWidget(){
+    renderWeatherWidget(window.HOME_WEATHER);
+    scheduleWeatherRefresh();
 }
 
 function MemberPreview(){

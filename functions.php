@@ -164,8 +164,16 @@ function get_itinerary(int $id): ?array {
 }
 function get_ai_messages(int $limit = 80): array { return query_all('SELECT id,sender,message,created_at FROM ai_messages ORDER BY created_at ASC, id ASC LIMIT ' . (int)$limit); }
 function save_ai_message(string $sender, string $message): int { return execute_sql('INSERT INTO ai_messages(sender,message) VALUES(?,?)', [$sender, $message]); }
+function weather_timezone(): DateTimeZone {
+    return new DateTimeZone('Asia/Ho_Chi_Minh');
+}
+
+function weather_location(): array {
+    return ['lat' => 20.9747, 'lon' => 107.7665, 'label' => 'Cô Tô, Quảng Ninh'];
+}
+
 function daily_forecast_items(array $items, int $days = 4): array {
-    $today = date('Y-m-d');
+    $today = (new DateTimeImmutable('now', weather_timezone()))->format('Y-m-d');
     $byDate = [];
 
     foreach ($items as $item) {
@@ -190,17 +198,43 @@ function daily_forecast_items(array $items, int $days = 4): array {
 
 function fallback_weather(): array {
     $list = [];
-    for ($i=1; $i<=4; $i++) $list[] = ['dt_txt'=>date('Y-m-d 12:00:00', strtotime("+$i day")), 'main'=>['temp'=>28 + ($i % 3)], 'weather'=>[['main'=>'Clear', 'description'=>'Trời đẹp']]];
+    $today = new DateTimeImmutable('now', weather_timezone());
+    for ($i=1; $i<=4; $i++) {
+        $forecastDate = $today->modify("+$i day")->setTime(12, 0);
+        $list[] = ['dt_txt'=>$forecastDate->format('Y-m-d H:i:s'), 'main'=>['temp'=>28 + ($i % 3)], 'weather'=>[['main'=>'Clear', 'description'=>'Trời đẹp']]];
+    }
     return [['weather'=>[['main'=>'Clear','description'=>'Trời đẹp']], 'main'=>['temp'=>29,'feels_like'=>32,'humidity'=>78], 'wind'=>['speed'=>14], 'name'=>'Cô Tô'], ['list'=>$list]];
 }
 function get_weather(): array {
     global $config;
     if (!$config['weather_api_key']) return fallback_weather();
-    $params = http_build_query(['lat'=>20.9747, 'lon'=>107.7665, 'appid'=>$config['weather_api_key'], 'units'=>'metric', 'lang'=>'vi']);
+    $location = weather_location();
+    $params = http_build_query(['lat'=>$location['lat'], 'lon'=>$location['lon'], 'appid'=>$config['weather_api_key'], 'units'=>'metric', 'lang'=>'vi']);
     $current = @json_decode(@file_get_contents("https://api.openweathermap.org/data/2.5/weather?$params"), true);
     $forecast = @json_decode(@file_get_contents("https://api.openweathermap.org/data/2.5/forecast?$params"), true);
     if (!$current || empty($current['weather']) || empty($forecast['list'])) return fallback_weather();
     $current['wind']['speed'] = (int) round(($current['wind']['speed'] ?? 0) * 3.6);
     return [$current, ['list'=>daily_forecast_items($forecast['list'])]];
+}
+function weather_payload(array $current, array $forecast): array {
+    $weather = $current['weather'][0] ?? [];
+    $location = weather_location();
+
+    return [
+        'main' => $weather['main'] ?? 'Clear',
+        'description' => $weather['description'] ?? 'Trời đẹp',
+        'temp' => round($current['main']['temp'] ?? 0),
+        'feelsLike' => round($current['main']['feels_like'] ?? 0),
+        'humidity' => (int) ($current['main']['humidity'] ?? 0),
+        'wind' => (int) ($current['wind']['speed'] ?? 0),
+        'location' => $location['label'],
+        'date' => (new DateTimeImmutable('now', weather_timezone()))->format('Y-m-d'),
+        'forecast' => array_map(fn($item) => [
+            'date' => substr((string) ($item['dt_txt'] ?? ''), 0, 10),
+            'temp' => round($item['main']['temp'] ?? 0),
+            'main' => $item['weather'][0]['main'] ?? 'Clear',
+            'description' => $item['weather'][0]['description'] ?? 'Trời đẹp',
+        ], $forecast['list'] ?? []),
+    ];
 }
 function read_json_body(): array { return json_decode(file_get_contents('php://input'), true) ?: []; }

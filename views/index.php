@@ -143,16 +143,7 @@
 
     <script>
         window.TRIP_MEMBERS = ["Long", "Hoa", "Lan", "Linh", "LAnh"];
-        window.HOME_WEATHER = {
-            main: <?= json_encode($weather_main, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>,
-            description: <?= json_encode($weather_desc, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>,
-            temp: <?= round($current["main"]["temp"] ?? 0) ?>,
-            feelsLike: <?= round($current["main"]["feels_like"] ?? 0) ?>,
-            humidity: <?= (int) ($current["main"]["humidity"] ?? 0) ?>,
-            wind: <?= (int) ($current["wind"]["speed"] ?? 0) ?>,
-            location: "Cô Tô, Quảng Ninh",
-            forecast: <?= json_encode(array_map(fn($item) => ["date" => substr($item["dt_txt"], 0, 10), "temp" => round($item["main"]["temp"]), "main" => $item["weather"][0]["main"] ?? "Clear", "description" => $item["weather"][0]["description"] ?? "Trời đẹp"], $forecast["list"] ?? []), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>
-        };
+        window.HOME_WEATHER = <?= json_encode($weather_payload ?? weather_payload($current, $forecast), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
     </script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
     <script>window.APP_BASE_URL = <?= json_encode(base_path(), JSON_UNESCAPED_SLASHES) ?>;</script>

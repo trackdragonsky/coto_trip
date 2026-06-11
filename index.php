@@ -7,16 +7,14 @@ $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 try {
     if ($path === '/' && $method === 'GET') {
         [$current, $forecast] = get_weather();
-        $weather_main = $current['weather'][0]['main'] ?? 'Clear';
-        $weather_desc = $current['weather'][0]['description'] ?? 'Trời đẹp';
+        $weather_payload = weather_payload($current, $forecast);
         $gallery_items = get_gallery_items();
         $itineraries = get_itineraries();
         render('index', [
             'members' => default_members(),
             'current' => $current,
             'forecast' => $forecast,
-            'weather_main' => $weather_main,
-            'weather_desc' => $weather_desc,
+            'weather_payload' => $weather_payload,
             'gallery_count' => count($gallery_items),
             'upcoming_itineraries' => array_slice($itineraries, 0, 2),
         ]);
@@ -149,6 +147,12 @@ try {
         $reply = $json['choices'][0]['message']['content'] ?? 'AI đang bận, bạn thử lại sau nhé.';
         save_ai_message('assistant', $reply);
         json_out(['reply'=>$reply], $json ? 200 : 503);
+    }
+
+    if ($path === '/api/weather') {
+        header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+        [$current, $forecast] = get_weather();
+        json_out(weather_payload($current, $forecast));
     }
 
     if ($path === '/api/members') json_out(get_members());
